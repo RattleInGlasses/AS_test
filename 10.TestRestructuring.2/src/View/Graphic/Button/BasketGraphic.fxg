@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graphic xmlns="http://ns.adobe.com/fxg/2008" xmlns:fxg="http://ns.adobe.com/fxg/2008" xmlns:d="http://ns.adobe.com/fxg/2008/dt" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:svg="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd" version="2.0" viewWidth="32" viewHeight="32">
+  <mask>
+    <Group>
+      <Rect width="32" height="32">
+        <fill>
+          <SolidColor color="#ffffff" alpha="1"/>
+        </fill>
+      </Rect>
+    </Group>
+  </mask>
+  <!--Unknown tag: defs-->
+  <!--Unknown tag: sodipodi:namedview-->
+  <!--Unknown tag: metadata-->
+  <Group x="0" y="-1020.3622">
+    <Group id="layer1">
+      <Path data="m 2.4282289 1023.7074 c 3.7084018 28.7132 3.7084018 28.7132 3.7084018 28.7132 l 19.7781423 0 3.708402 -28.7132 z" winding="evenOdd" id="path3502">
+        <fill>
+          <SolidColor color="#000000" alpha="1"/>
+        </fill>
+      </Path>
+      <Rect x="0" y="1023" width="32" height="2" radiusY="2.1487484e-005" radiusX="2.1487484e-005" id="rect4314">
+        <fill>
+          <SolidColor color="#000000" alpha="1"/>
+        </fill>
+      </Rect>
+      <Rect x="5" y="1020" width="22" height="3" radiusY="2.7523469e-005" radiusX="2.7523469e-005" id="rect5782">
+        <fill>
+          <SolidColor color="#000000" alpha="1"/>
+        </fill>
+      </Rect>
+    </Group>
+  </Group>
+</Graphic>

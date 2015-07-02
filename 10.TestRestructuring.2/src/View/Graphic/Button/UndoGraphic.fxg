@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Graphic xmlns="http://ns.adobe.com/fxg/2008" xmlns:fxg="http://ns.adobe.com/fxg/2008" xmlns:d="http://ns.adobe.com/fxg/2008/dt" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:svg="http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd" version="2.0" viewWidth="100" viewHeight="100">
+  <mask>
+    <Group>
+      <Rect width="100" height="100">
+        <fill>
+          <SolidColor color="#ffffff" alpha="1"/>
+        </fill>
+      </Rect>
+    </Group>
+  </mask>
+  <!--Unknown tag: defs-->
+  <!--Unknown tag: sodipodi:namedview-->
+  <!--Unknown tag: metadata-->
+  <Group x="0" y="-952.36216">
+    <Group id="layer1">
+      <Path winding="nonZero" id="path4204"/>
+      <!--Elliptic arc command in path data not supported, please convert to path (arcs are thus converted to curves) before exporting.-->
+      <Rect x="0" y="952" width="100" height="100" radiusY="0.00022618422" radiusX="0.00022618422" id="rect4274">
+        <fill>
+          <SolidColor color="#FFFFFF" alpha="1"/>
+        </fill>
+      </Rect>
+    </Group>
+  </Group>
+  <Group id="layer3">
+    <Group x="0" y="-952.36216">
+      <Ellipse x="6" width="88" y="980" height="68" id="path4208">
+        <stroke>
+          <SolidColorStroke color="#000000" alpha="1" weight="10" miterLimit="4" joints="miter" caps="none"/>
+        </stroke>
+      </Ellipse>
+    </Group>
+    <Rect x="0" y="0" width="48" height="61" radiusY="0.00021251354" radiusX="0.00021251354" id="rect4156">
+      <fill>
+        <SolidColor color="#FFFFFF" alpha="1"/>
+      </fill>
+    </Rect>
+  </Group>
+  <Group id="layer4">
+    <Group x="0" y="-952.36216">
+      <Path data="m 50.66735 979.91558 c -14.28876 -0.0377 -14.28876 -0.0377 -14.28876 -0.0377" winding="evenOdd" id="path4214">
+        <stroke>
+          <SolidColorStroke color="#000000" alpha="1" weight="10" miterLimit="4" joints="miter" caps="round"/>
+        </stroke>
+      </Path>
+    </Group>
+  </Group>
+  <Group id="layer5">
+    <Group x="0" y="-952.36216">
+      <Path data="m 49.822829 955.82012 c -19.933274 23.5478 -19.933274 23.5478 -19.933274 23.5478 l 19.933274 24.61828" winding="evenOdd" id="path4264">
+        <stroke>
+          <SolidColorStroke color="#000000" alpha="1" weight="10" miterLimit="4" joints="miter" caps="round"/>
+        </stroke>
+      </Path>
+    </Group>
+  </Group>
+</Graphic>
