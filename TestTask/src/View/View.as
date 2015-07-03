@@ -34,28 +34,14 @@ package View
 		
 		// functions for controlling view
 		
-		public function set selectedObjectIndex(value: uint): void
+		public function set selectedObject(value: ViewObject): void
 		{
-			if (value != uint.MAX_VALUE)
-			{
-				_controller.selectedObject = _workArea.getChildAt(value) as ViewObject;
-			}
-			else
-			{
-				_controller.selectedObject = null;
-			}
+			_controller.selectedObject = value;
 		}
 		
-		public function get selectedObjectIndex(): uint
+		public function get selectedObject(): ViewObject
 		{
-			if (_controller.selectedObject)
-			{
-				return _workArea.getChildIndex(_controller.selectedObject);
-			}
-			else
-			{
-				return uint.MAX_VALUE
-			}
+			return _controller.selectedObject;
 		}
 		
 		public function createGuiObject(objIndex: uint, objType: ObjectForm, objColor: uint, objRect: Rectangle): ViewObject
@@ -89,7 +75,7 @@ package View
 		{
 			var objToDel: ViewObject = _workArea.getChildAt(objIndex) as ViewObject;
 			_workArea.removeChild(objToDel);
-			selectedObjectIndex = uint.MAX_VALUE;
+			selectedObject = null;
 		}
 		
 		public function changeGuiObjectRect(guiObject: ViewObject, modelObjRect: Rectangle): void
@@ -266,7 +252,7 @@ package View
 		{
 			if ((e.target == _workArea) || (e.target == stage))
 			{
-				selectedObjectIndex = uint.MAX_VALUE;
+				selectedObject = null;
 			}
 		}
 		

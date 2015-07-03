@@ -61,10 +61,12 @@ package Controller
 		
 		private function setViewFocus(e: ModelEvent): void
 		{
-			ignoreFocusUpdate = true;
-			trace("m to v focus");
-			_view.selectedObjectIndex = _modelPresenter.selectedObjectIndex;
-			ignoreFocusUpdate = false;
+			if (_modelPresenter.selectedObject == null)
+			{
+				ignoreFocusUpdate = true;
+				_view.selectedObject = null;
+				ignoreFocusUpdate = false;
+			}
 		}
 		
 		private function createViewObject(e: ModelEvent): void
@@ -81,6 +83,27 @@ package Controller
 				_view.changeGuiObjectRect(guiObj, mdlObj.rect);
 			},
 			false, 0, true);
+			
+			var ignoreUpdate: Boolean = false;
+			_view.addEventListener(ViewEvent.CHANGE_FOCUS_REQUEST, function(e: ViewEvent): void {
+				if (_view.selectedObject == guiObj)
+				{
+					if (ignoreUpdate)
+					{
+						return
+					}
+					_modelPresenter.selectedObject = mdlObj;
+				}
+			});
+			
+			_modelPresenter.addEventListener(ModelEvent.FOCUS_CHANGED, function(e: ModelEvent): void {
+				if (_modelPresenter.selectedObject == mdlObj)
+				{
+					ignoreUpdate = true;
+					_view.selectedObject = guiObj;
+					ignoreUpdate = false;
+				}
+			});
 		}
 		
 		private function deleteViewObject(e: ModelEvent): void
@@ -97,14 +120,14 @@ package Controller
 		
 		private function setModelFocus(e: ViewEvent): void
 		{
-			if (ignoreFocusUpdate) 
+			if (_view.selectedObject == null)
 			{
-				return;
+				if (ignoreFocusUpdate) 
+				{
+					return;
+				}
+				_modelPresenter.selectedObject = null;
 			}
-			ignoreFocusUpdate = true;
-			trace("v to m focus");
-			_modelPresenter.selectedObjectIndex = _view.selectedObjectIndex;
-			ignoreFocusUpdate = false;
 		}
 		
 		private function createModelObject(e: ViewEvent): void

@@ -21,12 +21,13 @@ package Model.ModelPresenter.Command
 		public function execute(): void
 		{
 			_deletedObj = _model.deleteObject(_objToDelIndex);
+			_selectionController.selectedObject = null;
 		}
 		
 		public function undo(): void
 		{
 			_model.addObjectToModel(_deletedObj, _objToDelIndex);
-			_selectionController.selectedObjectIndex = _objToDelIndex;
+			_selectionController.selectedObject = _deletedObj;
 		}
 	}
 }

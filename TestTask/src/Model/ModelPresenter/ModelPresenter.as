@@ -12,7 +12,7 @@ package Model.ModelPresenter
 	{
 		private var _model: Model;
 		private var _commandStack: CommandStack;
-		private var _selection: uint = uint.MAX_VALUE;
+		private var _selection: ModelObject;
 		
 		public function ModelPresenter(m: Model) 
 		{
@@ -27,12 +27,12 @@ package Model.ModelPresenter
 		
 		// model-interface functions
 		
-		public function get selectedObjectIndex(): uint
+		public function get selectedObject(): ModelObject
 		{
 			return _selection;
 		}
 		
-		public function set selectedObjectIndex(value: uint): void
+		public function set selectedObject(value: ModelObject): void
 		{
 			if (_selection != value)
 			{

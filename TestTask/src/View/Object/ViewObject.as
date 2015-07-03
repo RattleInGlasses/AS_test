@@ -5,6 +5,7 @@ package View.Object
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import View.Event.ViewEvent;
 	import View.Event.ViewObjectEvent;
 	
 	public class ViewObject extends Sprite
@@ -49,6 +50,11 @@ package View.Object
 		public function setRectByModelData(value: Rectangle): void
 		{
 			rect = convertModelRectToViewRect(value);
+		}
+		
+		public function sendChangeObjectRequest(): void
+		{
+			dispatchEvent(new ViewEvent(ViewEvent.CHANGE_OBJECT_REQUEST));
 		}
 		
 		// listeners init

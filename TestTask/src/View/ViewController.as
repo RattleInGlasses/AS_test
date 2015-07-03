@@ -1,10 +1,11 @@
-package View.Object 
+package View 
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import View.Event.*;
+	import View.Object.*;
 
 	public class ViewController extends EventDispatcher
 	{
@@ -102,7 +103,7 @@ package View.Object
 			_selectionFrame.rect = _boundObject.rect;
 			if (!_lastSentRect.equals(_boundObject.rect))
 			{
-				_boundObject.dispatchEvent(new ViewEvent(ViewEvent.CHANGE_OBJECT_REQUEST));
+				_boundObject.sendChangeObjectRequest();
 				_lastSentRect = _boundObject.rect;
 			}
 		}

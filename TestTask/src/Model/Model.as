@@ -19,9 +19,9 @@ package Model
 			_modelSaverLoader = new SaverLoader();
 		}
 		
-		public function createAndAddModelObject(rect: Rectangle, objType: ObjectForm, color: uint): uint
+		public function createModelObject(rect: Rectangle, objType: ObjectForm, color: uint): ModelObject
 		{
-			return addObjectToModel(new ModelObject(rect, objType, color));
+			return new ModelObject(rect, objType, color);
 		}
 		
 		public function addObjectToModel(obj: ModelObject, modelIndex: Number = NaN): uint
@@ -75,7 +75,8 @@ package Model
 			var savedState: Vector.<ModelObject> = _modelSaverLoader.loadState();
 			for each (var obj: ModelObject in savedState) 
 			{
-				createAndAddModelObject(obj.rect, obj.type, obj.color);
+				var newObj: ModelObject = createModelObject(obj.rect, obj.type, obj.color);
+				addObjectToModel(newObj);
 			}
 		}
 	}

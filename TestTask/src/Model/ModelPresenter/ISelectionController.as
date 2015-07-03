@@ -1,9 +1,10 @@
 package Model.ModelPresenter 
 {
+	import Model.ModelObject;
 	
 	public interface ISelectionController 
 	{
-		function set selectedObjectIndex(value: uint): void;
-		function get selectedObjectIndex(): uint;
+		function set selectedObject(value: ModelObject): void;
+		function get selectedObject(): ModelObject;
 	}
 }

@@ -13,8 +13,6 @@ package Model.ModelPresenter.Command
 		private var _changingObject: ModelObject;
 		private var _rectBeforeExec: Rectangle;
 		private var _newRect: Rectangle;
-		private var _changingObjectectIndex: uint;
-		private var _redoObjectIndex: uint = uint.MAX_VALUE;
 		
 		public function SetRectCommand(m: Model, sc: ISelectionController, changingObject: ModelObject, rect: Rectangle) 
 		{
@@ -27,21 +25,15 @@ package Model.ModelPresenter.Command
 		public function execute(): void
 		{
 			_rectBeforeExec = _changingObject.rect;
-			if (_redoObjectIndex == uint.MAX_VALUE)
-			{
-				_redoObjectIndex = _changingObjectectIndex = _selectionController.selectedObjectIndex;
-			}
-			else
-			{
-				_changingObjectectIndex = _redoObjectIndex;
-			}
+			_selectionController.selectedObject = _changingObject;
 			_model.setObjectRect(_changingObject, _newRect);
 		}
 		
 		public function undo(): void
 		{
-			_selectionController.selectedObjectIndex = _changingObjectectIndex;
+			_selectionController.selectedObject = _changingObject;
 			_model.setObjectRect(_changingObject, _rectBeforeExec);
+			_selectionController.selectedObject = _changingObject;
 		}
 	}
 }
