@@ -1,14 +1,17 @@
 package View.Object 
 {
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import View.Event.*;
 
-	public class ViewController 
+	public class ViewController extends EventDispatcher
 	{
 		private var _selectionFrame: SelectionFrame;
 		private var _boundObject: ViewObject;
 		private var _lastSentRect: Rectangle;
+		private var _lastSentSelection: ViewObject;
 		
 		public function ViewController(selectionFrame: SelectionFrame) 
 		{
@@ -18,20 +21,33 @@ package View.Object
 		
 		// used by View
 		
-		public function bindObjectToFrame(object: ViewObject): void
-		{
-			removeOldListeners();
-			addNewListeners(object);
-			_lastSentRect = object.rect.clone();
-			_selectionFrame.rect = object.rect.clone();
-			_boundObject = object;
-			_selectionFrame.show();
-			_selectionFrame.dispatchEvent(new SelectionFrameEvent(SelectionFrameEvent.BOUND));
-		}	
-		
-		public function get boundObject(): ViewObject
+		public function get selectedObject(): ViewObject
 		{
 			return _boundObject;
+		}
+		
+		public function set selectedObject(object: ViewObject): void
+		{			
+			_boundObject = object;
+			removeOldListeners();
+			if (object)
+			{
+				addNewListeners(object);
+				_lastSentRect = object.rect.clone();
+				_selectionFrame.rect = object.rect.clone();
+				_selectionFrame.show();
+				_selectionFrame.dispatchEvent(new SelectionFrameEvent(SelectionFrameEvent.BOUND));
+			}
+			else // object == null
+			{
+				_selectionFrame.hide();
+			}
+			
+			if (_lastSentSelection != object)
+			{
+				_lastSentSelection = object;
+				dispatchEvent(new ViewControllerEvent(ViewControllerEvent.SELECTION_CHANGED));
+			}
 		}
 		
 		// listeners
@@ -39,13 +55,13 @@ package View.Object
 		private function addSelectionFrameListeners(): void
 		{
 			_selectionFrame.addEventListener(SelectionFrameEvent.CHANGE, changeViewObject);
-			_selectionFrame.addEventListener(SelectionFrameEvent.STOP_CHANGE, sendChangeEventToModel);
+			_selectionFrame.addEventListener(SelectionFrameEvent.STOP_CHANGE, sendChangeObjectRequestToModel);
 		}
 		
 		private function addNewListeners(object: ViewObject): void
 		{
 			object.addEventListener(ViewObjectEvent.CHANGE, changeSelectionFrame);
-			object.addEventListener(ViewObjectEvent.STOP_CHANGE, sendChangeEventToModel);
+			object.addEventListener(ViewObjectEvent.STOP_CHANGE, sendChangeObjectRequestToModel);
 			object.addEventListener(Event.REMOVED, unbindFrame);
 		}
 		
@@ -54,7 +70,7 @@ package View.Object
 			if (_boundObject)
 			{
 				_boundObject.removeEventListener(ViewObjectEvent.CHANGE, changeSelectionFrame);
-				_boundObject.removeEventListener(ViewObjectEvent.STOP_CHANGE, sendChangeEventToModel);
+				_boundObject.removeEventListener(ViewObjectEvent.STOP_CHANGE, sendChangeObjectRequestToModel);
 				_boundObject.removeEventListener(Event.REMOVED, unbindFrame);
 			}
 		}
@@ -69,7 +85,6 @@ package View.Object
 		private function unbindFrame(e: Event): void
 		{
 			removeOldListeners();
-			_selectionFrame.hide();
 			_selectionFrame.dispatchEvent(new SelectionFrameEvent(SelectionFrameEvent.UNBOUND));
 		}
 		
@@ -82,7 +97,7 @@ package View.Object
 		
 		// common listen 
 		
-		private function sendChangeEventToModel(e: Event): void
+		private function sendChangeObjectRequestToModel(e: Event): void
 		{
 			_selectionFrame.rect = _boundObject.rect;
 			if (!_lastSentRect.equals(_boundObject.rect))

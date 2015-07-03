@@ -8,6 +8,7 @@ package Model
 		public static const OBJECT_DELETED: String        = "mdlObjectDeleted";
 		public static const OBJECT_RECT_CHANGED: String   = "mdlObjectRChanged";
 		public static const STACK_CHANGED: String         = "mdlStackChanged";
+		public static const FOCUS_CHANGED: String         = "mdlFocusChanged";
 		
 		private var _changedObj: ModelObject = null;
 		private var _objPositionIndex: uint = 0;

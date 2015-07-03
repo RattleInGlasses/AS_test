@@ -1,45 +1,63 @@
 package Model.ModelPresenter 
 {
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 	import Model.*;
 	import Model.ModelPresenter.Command.*;
+	import Model.ModelPresenter.Event.*;
+	import Type.ObjectForm;
 	
-	public class ModelPresenter extends EventDispatcher
+	public class ModelPresenter extends EventDispatcher implements ISelectionController
 	{
 		private var _model: Model;
 		private var _commandStack: CommandStack;
+		private var _selection: uint = uint.MAX_VALUE;
 		
 		public function ModelPresenter(m: Model) 
 		{
 			_model = m;
 			_commandStack = new CommandStack();
 			
-			_model.addEventListener(ModelEvent.OBJECT_ADDED, notifyControllerAboutChangedObject);
-			_model.addEventListener(ModelEvent.OBJECT_DELETED, notifyControllerAboutChangedObject);
-			_model.addEventListener(ModelEvent.OBJECT_RECT_CHANGED, notifyControllerAboutChangedObject);
+			_model.addEventListener(ModelEvent.OBJECT_ADDED, notifyControllerAboutEvent);
+			_model.addEventListener(ModelEvent.OBJECT_DELETED, notifyControllerAboutEvent);
+			_model.addEventListener(ModelEvent.OBJECT_RECT_CHANGED, notifyControllerAboutEvent);
 			_commandStack.addEventListener(CommandStackEvent.STACK_CHANGED, notifyControllerAboutStackState);
 		}
 		
 		// model-interface functions
 		
-		public function createObject(objType: uint, rect: Rectangle, color: uint): void
+		public function get selectedObjectIndex(): uint
 		{
-			var createCommand: IUndoableCommand = new CreateCommand(_model, rect, objType, color);
+			return _selection;
+		}
+		
+		public function set selectedObjectIndex(value: uint): void
+		{
+			if (_selection != value)
+			{
+				_selection = value;
+				dispatchEvent(new ModelEvent(ModelEvent.FOCUS_CHANGED));
+			}
+		}
+		
+		public function createObject(objType: ObjectForm, rect: Rectangle, color: uint): void
+		{
+			var createCommand: IUndoableCommand = new CreateCommand(_model, this, rect, objType, color);
 			createCommand.execute();
 			_commandStack.addCommand(createCommand);
 		}
 		
 		public function deleteObject(objIndex: uint): void
 		{
-			var deleteCommand: IUndoableCommand = new DeleteCommand(_model, objIndex);
+			var deleteCommand: IUndoableCommand = new DeleteCommand(_model, this, objIndex);
 			deleteCommand.execute();
 			_commandStack.addCommand(deleteCommand);
 		}
 		
 		public function setObjectRect(objToChange: ModelObject, rect: Rectangle): void
 		{
-			var setRectCommand: IUndoableCommand = new SetRectCommand(_model, objToChange, rect);
+			var setRectCommand: IUndoableCommand = new SetRectCommand(_model, this, objToChange, rect);
 			setRectCommand.execute();
 			_commandStack.addCommand(setRectCommand);
 		}
@@ -74,7 +92,7 @@ package Model.ModelPresenter
 		
 		// functions-listeners for model changes
 		
-		private function notifyControllerAboutChangedObject(e: ModelEvent): void
+		private function notifyControllerAboutEvent(e: Event): void
 		{
 			dispatchEvent(e);
 		}

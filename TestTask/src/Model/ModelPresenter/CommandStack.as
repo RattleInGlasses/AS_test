@@ -2,6 +2,7 @@ package Model.ModelPresenter
 {
 	import flash.events.EventDispatcher;
 	import Model.ModelPresenter.Command.IUndoableCommand;
+	import Model.ModelPresenter.Event.CommandStackEvent;
 	
 	public class CommandStack extends EventDispatcher
 	{

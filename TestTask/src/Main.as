@@ -7,7 +7,8 @@ package
 	import Model.ModelPresenter.ModelPresenter;
 	import View.View;
 	
-	import flash.events.MouseEvent;
+		import flash.events.MouseEvent;
+		import flash.geom.Rectangle;
 	
 	public class Main extends Sprite 
 	{

@@ -1,22 +1,27 @@
 package Controller 
 {
+	import flash.events.EventDispatcher;
+	import flash.events.FocusEvent;
 	import flash.geom.Rectangle;
 	import flash.utils.*;
 	import Model.*;
 	import Model.ModelPresenter.ModelPresenter;
+	import Type.ObjectForm;
 	import View.View;
 	import View.Object.*;
 	import View.View;
 	import View.Event.*;
 	import flash.events.Event;
 	
-	public class Controller 
+	public class Controller
 	{
 		private const MAX_COLOR_BRIGHTNESS: uint = 240;
 		
 		private var _defaultObjectRect: Rectangle = new Rectangle();
 		private var _modelPresenter: ModelPresenter;
 		private var _view: View;
+		
+		private var ignoreFocusUpdate: Boolean = false;
 		
 		public function Controller(mp: ModelPresenter, v: View)
 		{
@@ -42,44 +47,40 @@ package Controller
 			_modelPresenter.addEventListener(ModelEvent.OBJECT_ADDED, createViewObject);
 			_modelPresenter.addEventListener(ModelEvent.OBJECT_DELETED, deleteViewObject);
 			_modelPresenter.addEventListener(ModelEvent.STACK_CHANGED, setUndoRedoViewState);
+			_modelPresenter.addEventListener(ModelEvent.FOCUS_CHANGED, setViewFocus);
 			
 			_view.addEventListener(ViewEvent.CREATE_OBJECT_REQUEST, createModelObject);
 			_view.addEventListener(ViewEvent.DELETE_OBJECT_REQUEST, deleteModelObject);
 			_view.addEventListener(ViewEvent.UNDO_REQUEST, undo);
 			_view.addEventListener(ViewEvent.REDO_REQUEST, redo);
 			_view.addEventListener(ViewEvent.SAVE_MODEL_STATE_REQUEST, saveModelState);
+			_view.addEventListener(ViewEvent.CHANGE_FOCUS_REQUEST, setModelFocus);
 		}
 		
 		// functions-listeners for model changes
 		
+		private function setViewFocus(e: ModelEvent): void
+		{
+			ignoreFocusUpdate = true;
+			trace("m to v focus");
+			_view.selectedObjectIndex = _modelPresenter.selectedObjectIndex;
+			ignoreFocusUpdate = false;
+		}
+		
 		private function createViewObject(e: ModelEvent): void
 		{
-			var guiObj: ViewObject = _view.createGuiObject(e.objPositionIndex, e.modelObj);
 			var mdlObj: ModelObject = e.modelObj;
+			var guiObj: ViewObject = _view.createGuiObject(e.objPositionIndex, mdlObj.type, mdlObj.color, mdlObj.rect);			
 			
-			var ignoreUpdate: Boolean = false;
 			guiObj.addEventListener(ViewEvent.CHANGE_OBJECT_REQUEST, function(e: ViewEvent): void {
-					if (ignoreUpdate) 
-					{
-						return;
-					}
-					ignoreUpdate = true;
-					_modelPresenter.setObjectRect(mdlObj, guiObj.convertedRect);
-					ignoreUpdate = false;
-				},
-				false, 0, true);
+				_modelPresenter.setObjectRect(mdlObj, guiObj.convertedRect);
+			},
+			false, 0, true);
 			
-			// TODO: View не должен зависеть от модели. лучше сразу вьюшку модифицировать. родительская вьюшка может слушать дочерние и обновлять selection
 			mdlObj.addEventListener(ModelEvent.OBJECT_RECT_CHANGED, function(e: ModelEvent): void {
-					if (ignoreUpdate) 
-					{
-						return;
-					}
-					ignoreUpdate = true;
-					_view.changeGuiObjectRect(guiObj, mdlObj);
-					ignoreUpdate = false;
-				},
-				false, 0, true);
+				_view.changeGuiObjectRect(guiObj, mdlObj.rect);
+			},
+			false, 0, true);
 		}
 		
 		private function deleteViewObject(e: ModelEvent): void
@@ -92,7 +93,19 @@ package Controller
 			_view.setUndoRedoState(e.stackHasPrevCommand, e.stackHasNextCommand);
 		}
 		
-		// functions-listeners for view requests		
+		// functions-listeners for view requests	
+		
+		private function setModelFocus(e: ViewEvent): void
+		{
+			if (ignoreFocusUpdate) 
+			{
+				return;
+			}
+			ignoreFocusUpdate = true;
+			trace("v to m focus");
+			_modelPresenter.selectedObjectIndex = _view.selectedObjectIndex;
+			ignoreFocusUpdate = false;
+		}
 		
 		private function createModelObject(e: ViewEvent): void
 		{

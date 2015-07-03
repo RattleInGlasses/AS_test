@@ -1,4 +1,4 @@
-package Model.ModelPresenter 
+package Model.ModelPresenter.Event 
 {
 	import flash.events.Event;
 	

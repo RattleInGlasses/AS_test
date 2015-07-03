@@ -8,7 +8,7 @@ package View.Object
 	import View.Event.ViewObjectEvent;
 	
 	public class ViewObject extends Sprite
-	{
+	{		
 		private var _workingArea: Rectangle; 
 		private var _modelScene: Rectangle;		
 		

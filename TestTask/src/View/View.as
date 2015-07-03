@@ -4,11 +4,11 @@ package View
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import Model.ModelObject;
 	import View.Event.*;
 	import View.Graphic.Button.*;
 	import View.Graphic.ViewObject.*;
 	import View.Object.*;
+	import Type.ObjectForm;
 
 	public class View extends Sprite
 	{
@@ -34,40 +34,72 @@ package View
 		
 		// functions for controlling view
 		
-		public function createGuiObject(objIndex: uint, modelObj: ModelObject): ViewObject
+		public function set selectedObjectIndex(value: uint): void
+		{
+			if (value != uint.MAX_VALUE)
+			{
+				_controller.selectedObject = _workArea.getChildAt(value) as ViewObject;
+			}
+			else
+			{
+				_controller.selectedObject = null;
+			}
+		}
+		
+		public function get selectedObjectIndex(): uint
+		{
+			if (_controller.selectedObject)
+			{
+				return _workArea.getChildIndex(_controller.selectedObject);
+			}
+			else
+			{
+				return uint.MAX_VALUE
+			}
+		}
+		
+		public function createGuiObject(objIndex: uint, objType: ObjectForm, objColor: uint, objRect: Rectangle): ViewObject
 		{
 			var image: Sprite;
-			switch (modelObj.type)
+			switch (objType)
 			{				
-				case ModelObject.TRIANGLE:
-					image = new TriangleGraphic(modelObj.color);
+				case ObjectForm.TRIANGLE:
+					image = new TriangleGraphic(objColor);
 				break;
-				case ModelObject.RECTANGLE:
-					image = new RectangleGraphic(modelObj.color);
+				case ObjectForm.RECTANGLE:
+					image = new RectangleGraphic(objColor);
 				break;
-				case ModelObject.ELLIPSE:
-					image = new EllipseGraphic(modelObj.color);
+				case ObjectForm.ELLIPSE:
+					image = new EllipseGraphic(objColor);
 				break;
 			}
 			var workArea: Rectangle = new Rectangle(0, 0, _workAreaBounds.width, _workAreaBounds.height);
-			var newObj: ViewObject = new ViewObject(image, modelObj.rect, workArea, _modelScene);
+			var newObj: ViewObject = new ViewObject(image, objRect, workArea, _modelScene);
 			_workArea.addChildAt(newObj, objIndex);
 			
-			newObj.addEventListener(MouseEvent.MOUSE_DOWN, bindObjToFrame);
+			newObj.addEventListener(MouseEvent.MOUSE_DOWN, function (e: MouseEvent): void {
+				_controller.selectedObject = newObj;
+			},
+			false, 0, true);
+			
 			return newObj;
 		}
 		
 		public function deleteGuiObject(objIndex: uint): void
 		{
 			var objToDel: ViewObject = _workArea.getChildAt(objIndex) as ViewObject;
-			objToDel.removeEventListener(MouseEvent.MOUSE_DOWN, bindObjToFrame);
 			_workArea.removeChild(objToDel);
+			selectedObjectIndex = uint.MAX_VALUE;
 		}
 		
-		public function changeGuiObjectRect(viewObj: ViewObject, modelObj: ModelObject): void
+		public function changeGuiObjectRect(guiObject: ViewObject, modelObjRect: Rectangle): void
 		{
-			viewObj.setRectByModelData(modelObj.rect);
-			_controller.bindObjectToFrame(viewObj);
+			// after recreating an object, listeners of controller for old view object are still exist
+			if (_workArea.contains(guiObject))
+			{
+				guiObject.setRectByModelData(modelObjRect);
+				_controller.selectedObject = guiObject;
+			}
 		}
 
 		public function setUndoRedoState(undoState: Boolean, redoState: Boolean): void
@@ -131,7 +163,22 @@ package View
 			_btnDel.addEventListener(MouseEvent.CLICK, deleteObjectRequest);
 			
 			addEventListener(Event.DEACTIVATE, saveModelStateRequest);
+			
+			if (stage)
+			{
+				stage.addEventListener(MouseEvent.MOUSE_DOWN, setNullSelection);
+			}
+			else
+			{
+				addEventListener(Event.ADDED, addStageListener);
+			}
 		}	
+		
+		private function addStageListener(e: Event): void
+		{
+			removeEventListener(Event.ADDED, addStageListener);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, setNullSelection);
+		}
 		
 		private function addSelectionFrame(): void
 		{
@@ -167,33 +214,34 @@ package View
 		private function addController(): void
 		{
 			_controller = new ViewController(_selectionFrame);
+			_controller.addEventListener(ViewControllerEvent.SELECTION_CHANGED, changeSelectionRequest);
 		}
 		
 		// listener-functions for User Events
 		
-		private function bindObjToFrame(e: MouseEvent): void
+		private function changeSelectionRequest(e: ViewControllerEvent): void
 		{
-			_controller.bindObjectToFrame(e.currentTarget as ViewObject);
+			dispatchEvent(new ViewEvent(ViewEvent.CHANGE_FOCUS_REQUEST));
 		}
 		
 		private function createTriangleRequest(e: MouseEvent): void
 		{
-			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ModelObject.TRIANGLE));
+			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ObjectForm.TRIANGLE));
 		}
 		
 		private function createEllipseRequest(e: MouseEvent): void
 		{
-			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ModelObject.ELLIPSE));
+			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ObjectForm.ELLIPSE));
 		}
 		
 		private function createRectangleRequest(e: MouseEvent): void
 		{
-			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ModelObject.RECTANGLE));
+			dispatchEvent(new ViewEvent(ViewEvent.CREATE_OBJECT_REQUEST, 0, ObjectForm.RECTANGLE));
 		}
 		
 		private function deleteObjectRequest(e: MouseEvent): void
 		{
-			dispatchEvent(new ViewEvent(ViewEvent.DELETE_OBJECT_REQUEST, _workArea.getChildIndex(_controller.boundObject)))
+			dispatchEvent(new ViewEvent(ViewEvent.DELETE_OBJECT_REQUEST, _workArea.getChildIndex(_controller.selectedObject)))
 		}
 		
 		private function undoRequest(e: MouseEvent): void
@@ -212,6 +260,14 @@ package View
 		{
 			var saveModelRequest: ViewEvent = new ViewEvent(ViewEvent.SAVE_MODEL_STATE_REQUEST);
 			dispatchEvent(saveModelRequest);
+		}
+		
+		private function setNullSelection(e: MouseEvent): void
+		{
+			if ((e.target == _workArea) || (e.target == stage))
+			{
+				selectedObjectIndex = uint.MAX_VALUE;
+			}
 		}
 		
 		// listener-functions for Object Events

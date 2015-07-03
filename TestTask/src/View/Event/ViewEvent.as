@@ -3,6 +3,8 @@ package View.Event
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import Model.ModelObject;
+	import Type.ObjectForm;
+	import View.Object.ViewObject;
 	
 	public class ViewEvent extends Event
 	{
@@ -12,19 +14,18 @@ package View.Event
 		public static const UNDO_REQUEST: String             = "usrRqstUndo";
 		public static const REDO_REQUEST: String             = "usrRqstRedo";
 		public static const SAVE_MODEL_STATE_REQUEST: String = "usrRqstSaveModel";
+		public static const CHANGE_FOCUS_REQUEST: String     = "usrRqstFocusChange";
 		
 		private var _objIndex: uint;
-		private var _objType: uint;
+		private var _objType: ObjectForm;
 		private var _objRect: Rectangle;
-		private var _modelObj: ModelObject;
 		
-		public function ViewEvent(type: String, objIndex: uint = 0, objType: uint = 0, objRect: Rectangle = null, modelObj: ModelObject = null) 
+		public function ViewEvent(type: String, objIndex: uint = 0, objType: ObjectForm = null, objRect: Rectangle = null) 
 		{
 			super(type);
 			_objIndex = objIndex;
 			_objType = objType;
 			_objRect = objRect;
-			_modelObj = modelObj;
 		}
 		
 		public function get objIndex(): uint 
@@ -32,7 +33,7 @@ package View.Event
 			return _objIndex;
 		}
 		
-		public function get objType(): uint 
+		public function get objType(): ObjectForm 
 		{
 			return _objType;
 		}
@@ -40,11 +41,6 @@ package View.Event
 		public function get objRect(): Rectangle 
 		{
 			return _objRect.clone();
-		}
-		
-		public function get modelObj(): ModelObject
-		{
-			return _modelObj;
 		}
 	}
 }

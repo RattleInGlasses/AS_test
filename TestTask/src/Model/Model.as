@@ -2,8 +2,8 @@ package Model
 {
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
-	import flash.net.SharedObject;
 	import Model.Storage.*;
+	import Type.ObjectForm;
 	
 	public class Model extends EventDispatcher
 	{
@@ -19,7 +19,7 @@ package Model
 			_modelSaverLoader = new SaverLoader();
 		}
 		
-		public function createAndAddModelObject(rect: Rectangle, objType: uint, color: uint): uint
+		public function createAndAddModelObject(rect: Rectangle, objType: ObjectForm, color: uint): uint
 		{
 			return addObjectToModel(new ModelObject(rect, objType, color));
 		}

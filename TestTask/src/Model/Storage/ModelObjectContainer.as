@@ -5,15 +5,20 @@ package Model.Storage
 	import flash.utils.IDataOutput;
 	import flash.utils.IExternalizable;
 	import Model.ModelObject;
+	import Type.ObjectForm;
 	
 	public class ModelObjectContainer implements IExternalizable
 	{
+		private const INT_TRIANGLE: int  = 1;
+		private const INT_RECTANGLE: int = 2;
+		private const INT_ELLIPSE: int   = 3;
+		
 		private var _x: Number;
 		private var _y: Number;
 		private var _width: Number;
 		private var _height: Number;
 		private var _color: uint;
-		private var _type: uint;		
+		private var _type: ObjectForm;		
 		
 		public function ModelObjectContainer(mdlObj: ModelObject = null)
 		{
@@ -40,7 +45,7 @@ package Model.Storage
 			_width  = input.readDouble();
 			_height = input.readDouble();
 			_color  = input.readUnsignedInt();
-			_type   = input.readUnsignedInt();
+			_type   = IntToObjectForm(input.readUnsignedInt());
 		}
 		
 		public function writeExternal(output: IDataOutput): void
@@ -50,7 +55,43 @@ package Model.Storage
 			output.writeDouble(_width);
 			output.writeDouble(_height);
 			output.writeUnsignedInt(_color);
-			output.writeUnsignedInt(_type);
+			output.writeUnsignedInt(ObjectFormToInt(_type));
+		}
+		
+		private function ObjectFormToInt(value: ObjectForm): int
+		{
+			var result: int;
+			switch (value)
+			{
+				case ObjectForm.ELLIPSE:
+					result = INT_ELLIPSE;
+				break;
+				case ObjectForm.RECTANGLE:
+					result = INT_RECTANGLE;
+				break;
+				case ObjectForm.TRIANGLE:
+					result = INT_TRIANGLE;
+				break;
+			}
+			return result;
+		}
+		
+		private function IntToObjectForm(value: int): ObjectForm
+		{
+			var result: ObjectForm;
+			switch (value)
+			{
+				case INT_ELLIPSE:
+					result = ObjectForm.ELLIPSE;
+				break;
+				case INT_RECTANGLE:
+					result = ObjectForm.RECTANGLE;
+				break;
+				case INT_TRIANGLE:
+					result = ObjectForm.TRIANGLE;
+				break;
+			}
+			return result;
 		}
 	}
 }

@@ -6,6 +6,7 @@ package Model
 	import flash.utils.IDataOutput;
 	import flash.utils.IExternalizable;
 	import flash.net.registerClassAlias;
+	import Type.ObjectForm;
 	
 	public class ModelObject extends EventDispatcher
 	{
@@ -14,10 +15,10 @@ package Model
 		public static const ELLIPSE: uint   = 3;
 		
 		private var _rect: Rectangle;
-		private var _objType: uint;
+		private var _objType: ObjectForm;
 		private var _color: uint;
 		
-		public function ModelObject(rect: Rectangle, objType: uint, color: uint)
+		public function ModelObject(rect: Rectangle, objType: ObjectForm, color: uint)
 		{	
 			_rect = rect;
 			_objType = objType;
@@ -29,7 +30,7 @@ package Model
 			return _rect.clone();
 		}
 		
-		public function get type(): uint 
+		public function get type(): ObjectForm 
 		{
 			return _objType;
 		}
